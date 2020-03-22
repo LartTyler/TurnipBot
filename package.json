@@ -9,6 +9,8 @@
 		"@types/mongoose": "^5.7.7",
 		"@types/node": "^13.9.3",
 		"@types/ws": "^7.2.3",
+		"concurrently": "^5.1.0",
+		"nodemon": "^2.0.2",
 		"rimraf": "^3.0.2",
 		"typescript": "^3.8.3"
 	},
@@ -22,6 +24,8 @@
 	},
 	"scripts": {
 		"build": "rimraf ./dist && tsc",
-		"start": "node ./dist/index.js"
+		"start": "node ./dist/index.js",
+		"watch": "concurrently -k -p \"[{name}]\" -n \"Typescript,Node\" -c \"cyan.bold,green.bold\" \"tsc -w\" \"yarn serve-debug\"",
+		"serve-debug": "nodemon --inspect dist/index.js"
 	}
 }
