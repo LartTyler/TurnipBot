@@ -1,0 +1,28 @@
+import {Info} from 'luxon';
+import {UserInfo} from '../Models/UserInfo';
+import {Command, Emoji} from './index';
+
+// Syntax: (tz|timezone) <ianaTimezone>
+export const execute: Command = async (sender, args) => {
+	if (!Info.isValidIANAZone(args[0])) {
+		await sender.message.reply(
+			'Sorry, I didn\'t quite get that. Timezones need to be provided in an IANA-compatible format, e.g. ' +
+			'America/New_York.\n\nYou can find your timezone by visiting https://tz.turnipbot.com in your browser!',
+		);
+
+		return;
+	}
+
+	const doc: any = {
+		'$set': {
+			timezone: args[0],
+		},
+	};
+
+	if (sender.message.guild)
+		doc['$addToSet'].serverIds = sender.message.guild.id;
+
+	await UserInfo.findOneAndUpdate({userId: sender.user.id}, doc, {upsert: true});
+
+	await sender.message.react(Emoji.CHECKMARK);
+};
