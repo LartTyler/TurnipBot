@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta
+		name="viewport"
+		content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+	>
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Find Your IANA Timezone</title>
+
+	<link
+		rel="stylesheet"
+		href="https://cdn.jsdelivr.net/npm/bulma@0.8.1/css/bulma.min.css"
+		integrity="sha256-1nEaE91OpXJD7M6W5uSiqxhdmrY+lOOTHC1iUxU9Pds="
+		crossorigin="anonymous"
+	>
+</head>
+<body class="has-background-dark has-text-light has-text-centered" style="height: 100vh;">
+	<section class="section">
+		<h1 class="is-size-2-desktop is-size-5-mobile" style="margin-bottom: 10px;">Your Current Timezone Is...</h1>
+
+		<div id="timezone-name-container">
+			<button class="button is-dark is-loading is-large"></button>
+		</div>
+	</section>
+
+	<script src="https://polyfill.io/v3/polyfill.js?features=Intl"></script>
+
+	<script>
+		(() => {
+			const container = document.getElementById('timezone-name-container');
+
+			try {
+				container.innerText = (new Intl.DateTimeFormat()).resolvedOptions().timeZone;
+			} catch (e) {
+				container.innerText = 'Your browser doesn\'t support Intl.DateTimeFormat :(';
+			}
+		})();
+	</script>
+</body>
+</html>
