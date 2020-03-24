@@ -45,6 +45,8 @@ export const execute: Command = async (sender, args) => {
 		},
 	);
 
+	sender.userInfo.currentData = sender.userInfo.currentData || {};
+
 	sender.userInfo.currentData.sellPrice = price;
 	sender.userInfo.currentData.sellExpiration = now.plus({hours: 12 - now.hour}).startOf('hour').toUTC().toJSDate();
 

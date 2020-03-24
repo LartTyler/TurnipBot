@@ -54,6 +54,8 @@ export const execute: Command = async (sender, args) => {
 	else
 		expiration = now.plus({days: 1}).startOf('day');
 
+	sender.userInfo.currentData = sender.userInfo.currentData || {};
+
 	sender.userInfo.currentData.buyPrice = price;
 	sender.userInfo.currentData.buyExpiration = expiration.toUTC().toJSDate();
 
