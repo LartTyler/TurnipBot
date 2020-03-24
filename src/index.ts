@@ -45,6 +45,9 @@ client.on('message', async (message: Message) => {
 		return parts;
 	}, [] as string[]);
 
+	// throw away the mention
+	args.shift();
+
 	await Commands.execute(new CommandSender(message, user), args);
 });
 
