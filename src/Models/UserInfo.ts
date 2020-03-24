@@ -35,7 +35,7 @@ const UserInfoSchema = new Schema({
 		required: true,
 	},
 	serverIds: {
-		type: SchemaTypes.Array,
+		type: [SchemaTypes.String],
 		required: true,
 	},
 	timezone: {
