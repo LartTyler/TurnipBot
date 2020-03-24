@@ -38,12 +38,26 @@ export const execute: Command = async (sender, args) => {
 			morning: now.hour < 12,
 		},
 		{
-			price,
+			'$set': {
+				price,
+			},
 		},
 		{
 			upsert: true,
 		},
 	);
+
+	let expiration: DateTime;
+
+	if (now.hour < 12)
+		expiration = now.plus({hours: 12 - now.hour}).startOf('hour');
+	else
+		expiration = now.plus({days: 1}).startOf('day');
+
+	sender.userInfo.currentData.buyPrice = price;
+	sender.userInfo.currentData.buyExpiration = expiration.toUTC().toJSDate();
+
+	await sender.userInfo.save();
 
 	await sender.message.react(Emoji.CHECKMARK);
 };

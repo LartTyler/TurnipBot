@@ -4,6 +4,7 @@ export const connect = (uri: string) => {
 	mongoose.connect(uri, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
+		useFindAndModify: false,
 	}).then(() => {
 		console.info('Database connection established');
 	}).catch(err => {

@@ -13,8 +13,8 @@ export const execute: Command = async (sender, args) => {
 
 	const now = DateTime.fromObject({zone: sender.userInfo.timezone});
 
-	if (now.weekday !== WeekDay.SUNDAY) {
-		await sender.message.reply('Daisy Mae only sells turnips on Sunday.');
+	if (now.weekday !== WeekDay.SUNDAY || now.hour >= 12) {
+		await sender.message.reply('Daisy Mae only sells turnips on Sunday morning.');
 
 		return;
 	}
@@ -36,12 +36,19 @@ export const execute: Command = async (sender, args) => {
 			week: now.weekNumber,
 		},
 		{
-			price,
+			'$set': {
+				price,
+			},
 		},
 		{
 			upsert: true,
 		},
 	);
+
+	sender.userInfo.currentData.sellPrice = price;
+	sender.userInfo.currentData.sellExpiration = now.plus({hours: 12 - now.hour}).startOf('hour').toUTC().toJSDate();
+
+	await sender.userInfo.save();
 
 	await sender.message.react(Emoji.CHECKMARK);
 };
