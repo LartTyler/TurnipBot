@@ -6,8 +6,8 @@ import {Command, Emoji} from './index';
 export const execute: Command = async (sender, args) => {
 	if (!Info.isValidIANAZone(args[0])) {
 		await sender.message.reply(
-			'Sorry, I didn\'t quite get that. Timezones need to be provided in an IANA-compatible format, e.g. ' +
-			'America/New_York.\n\nYou can find your timezone by visiting https://tz.turnipbot.com in your browser!',
+			'Sorry, I didn\'t quite get that.\n\nTimezones need to be provided in an IANA-compatible format, e.g. ' +
+			'`America/New_York`. You can find your timezone by visiting https://tz.turnipbot.com in your browser!',
 		);
 
 		return;
