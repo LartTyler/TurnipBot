@@ -52,4 +52,4 @@ export enum Emoji {
 }
 
 export const TIMEZONE_REQUIRED_MESSAGE = 'I don\'t know what timezone you\'re in, so I can\'t record your buy ' +
-	'price correctly. Can you set your timezone using `@TurnipBot register <timezone>`, then try again?';
+	'price correctly. Can you set your timezone using `@TurnipBot timezone <timezone>`, then try again?';
