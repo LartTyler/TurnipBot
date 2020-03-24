@@ -20,7 +20,7 @@ export const execute: Command = async (sender, args) => {
 	};
 
 	if (sender.message.guild)
-		doc['$addToSet'].serverIds = sender.message.guild.id;
+		doc['$addToSet'] = {serverIds: sender.message.guild.id};
 
 	await UserInfo.findOneAndUpdate({userId: sender.user.id}, doc, {upsert: true});
 
