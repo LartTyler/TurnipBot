@@ -91,19 +91,6 @@ export const execute: Command = async (sender, args) => {
 
 function formatPriceLine(name: string, price: number, expiration: Date) {
 	const diff = DateTime.fromJSDate(expiration).diff(DateTime.utc());
-	const expireParts = [];
 
-	if (diff.hours >= 1) {
-		const h = Math.floor(diff.hours);
-
-		expireParts.push(`${h} hour${h !== 1 ? 's' : ''}`);
-	}
-
-	if (diff.minutes >= 1) {
-		const m = Math.floor(diff.minutes);
-
-		expireParts.push(`${m} minute${m !== 1 ? 's' : ''}`);
-	}
-
-	return `${price} bells on ${name}'s island (${expireParts.join(' and ')} remaining)`;
+	return `${price} bells on ${name}'s island (${diff.toFormat('hh:mm')} remaining)`;
 }
