@@ -32,8 +32,18 @@ client.on('message', async (message: Message) => {
 		console.warn('Messages received before logging in will be discarded!');
 
 		return;
-	} else if (!message.content || !message.mentions.has(client.user, {ignoreEveryone: true}))
+	} else if (!message.content || message.author === client.user)
 		return;
+
+	// A message isn't a direct message if it has a `guild` prop
+	if (message.guild) {
+		const member = message.guild.member(client.user);
+
+		if (!member || !message.mentions.has(member, {ignoreEveryone: true}))
+			return;
+	}
+
+	console.debug('Got command "%s" from %s"', message.content, message.author.tag);
 
 	const user = await UserInfo.findOne({userId: message.author.id});
 	const args = message.content.toLowerCase().split(' ').reduce((parts, part) => {
@@ -45,8 +55,9 @@ client.on('message', async (message: Message) => {
 		return parts;
 	}, [] as string[]);
 
-	// throw away the mention
-	args.shift();
+	// Throw away the mention, if this is NOT a direct message
+	if (message.guild)
+		args.shift();
 
 	await Commands.execute(new CommandSender(message, user), args);
 });
