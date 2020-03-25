@@ -32,7 +32,7 @@ client.on('message', async (message: Message) => {
 		console.warn('Messages received before logging in will be discarded!');
 
 		return;
-	} else if (!message.content || !message.mentions.has(client.user, {ignoreRoles: true, ignoreEveryone: true}))
+	} else if (!message.content || !message.mentions.has(client.user, {ignoreEveryone: true}))
 		return;
 
 	const user = await UserInfo.findOne({userId: message.author.id});
