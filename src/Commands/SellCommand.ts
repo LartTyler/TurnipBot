@@ -17,6 +17,10 @@ export const execute: Command = async (sender, args) => {
 		await sender.message.reply('Daisy Mae only sells turnips on Sunday morning.');
 
 		return;
+	} else if (now.hour < 5) {
+		await sender.message.reply('Daisy Mae has not arrived on your island yet.');
+
+		return;
 	}
 
 	const price = parseInt(args.find(arg => /\d+/.test(arg)) || '', 10);
