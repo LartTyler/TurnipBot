@@ -1,7 +1,4 @@
 import {DateTime} from 'luxon';
-import {FilterQuery, Model} from 'mongoose';
-import {BuyData, IBuyData} from '../Models/BuyData';
-import {ISellData, SellData} from '../Models/SellData';
 import {UserInfo} from '../Models/UserInfo';
 import {ucfirst, WeekDay} from '../util';
 import {Command} from './index';
@@ -53,6 +50,7 @@ export const execute: Command = async (sender, args) => {
 		)).map(item => formatPriceLine(
 			guild.member(item.userId)?.displayName || '[redacted]',
 			item.currentData.buyPrice,
+			item.currentData.buyExpiration,
 		));
 	} else if (type === PriceType.SELL) {
 		lines = (await UserInfo.find(
@@ -72,6 +70,7 @@ export const execute: Command = async (sender, args) => {
 		)).map(item => formatPriceLine(
 			guild.member(item.userId)?.displayName || '[redacted]',
 			item.currentData.sellPrice,
+			item.currentData.sellExpiration,
 		));
 	} else {
 		await sender.message.reply('Sorry, I didn\'t quite get that. Allowed price types are "buy" and "sell."');
@@ -90,48 +89,21 @@ export const execute: Command = async (sender, args) => {
 	}
 };
 
-function formatPriceLine(name: string, price: number) {
-	return `${price} bells on ${name}'s island`;
-}
+function formatPriceLine(name: string, price: number, expiration: Date) {
+	const diff = DateTime.fromJSDate(expiration).diff(DateTime.utc());
+	const expireParts = [];
 
-async function getUsersForServer(serverId: string): Promise<string[]> {
-	return (await UserInfo.find({
-		serverIds: serverId,
-	}, '+userId -_id')).map(item => item.userId);
-}
+	if (diff.hours >= 1) {
+		const h = Math.floor(diff.hours);
 
-async function getBestSellPrices(serverId: string, limit: number = 1): Promise<ISellData[]> {
-	return getBestPrices(SellData, serverId, 1, limit);
-}
+		expireParts.push(`${h} hour${h !== 1 ? 's' : ''}`);
+	}
 
-async function getBestBuyPrices(serverId: string, limit: number = 1): Promise<IBuyData[]> {
-	return getBestPrices(BuyData, serverId, -1, limit);
-}
+	if (diff.minutes >= 1) {
+		const m = Math.floor(diff.minutes);
 
-async function getBestPrices<T extends IBuyData | ISellData>(
-	source: Model<T>,
-	serverId: string,
-	sort: -1 | 1,
-	limit: number = 1,
-): Promise<T[]> {
-	const users = (await UserInfo.find({
-		serverIds: serverId,
-	}, '+userId -_id')).map(item => item.userId);
+		expireParts.push(`${m} minute${m !== 1 ? 's' : ''}`);
+	}
 
-	console.debug(users);
-
-	return (await source.find(
-		{
-			userId: {
-				'$in': users,
-			},
-		} as FilterQuery<T>,
-		null,
-		{
-			limit,
-			sort: {
-				price: sort,
-			},
-		},
-	));
+	return `${price} bells on ${name}'s island (${expireParts.join(' and ')} remaining)`;
 }
