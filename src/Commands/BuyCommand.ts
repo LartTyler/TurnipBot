@@ -17,6 +17,14 @@ export const execute: Command = async (sender, args) => {
 		await sender.message.reply('The shop doesn\'t buy turnips on Sunday.');
 
 		return;
+	} else if (now.hour >= 22 || now.hour < 3) {
+		await sender.message.reply('The shop on your island has already closed.');
+
+		return;
+	} else if (now.hour < 8) {
+		await sender.message.reply('The shop on your island hasn\'t opened yet.');
+
+		return;
 	}
 
 	const price = parseInt(args.find(arg => /\d+/.test(arg)) || '', 10);
