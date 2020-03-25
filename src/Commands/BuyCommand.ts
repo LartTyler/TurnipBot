@@ -62,4 +62,11 @@ export const execute: Command = async (sender, args) => {
 	await sender.userInfo.save();
 
 	await sender.message.react(Emoji.CHECKMARK);
+
+	console.debug(
+		'Updated buy price to %d for %s (valid until %s)',
+		price,
+		sender.user.tag,
+		expiration.toUTC().toISO(),
+	);
 };

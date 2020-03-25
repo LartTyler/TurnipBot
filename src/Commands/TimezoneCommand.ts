@@ -25,4 +25,6 @@ export const execute: Command = async (sender, args) => {
 	await UserInfo.findOneAndUpdate({userId: sender.user.id}, doc, {upsert: true});
 
 	await sender.message.react(Emoji.CHECKMARK);
+
+	console.debug('Updated local timezone to %s for %s', args[0], sender.user.tag);
 };

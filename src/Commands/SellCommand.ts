@@ -47,10 +47,14 @@ export const execute: Command = async (sender, args) => {
 
 	sender.userInfo.currentData = sender.userInfo.currentData || {};
 
+	const expiration = now.plus({hours: 12 - now.hour}).startOf('hour').toUTC();
+
 	sender.userInfo.currentData.sellPrice = price;
-	sender.userInfo.currentData.sellExpiration = now.plus({hours: 12 - now.hour}).startOf('hour').toUTC().toJSDate();
+	sender.userInfo.currentData.sellExpiration = expiration.toJSDate();
 
 	await sender.userInfo.save();
 
 	await sender.message.react(Emoji.CHECKMARK);
+
+	console.debug('Updated sell price to %d for %s (valid until %s)', price, sender.user.tag, expiration.toISO());
 };
