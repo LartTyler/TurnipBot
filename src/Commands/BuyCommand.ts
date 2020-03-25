@@ -52,7 +52,7 @@ export const execute: Command = async (sender, args) => {
 	if (now.hour < 12)
 		expiration = now.plus({hours: 12 - now.hour}).startOf('hour');
 	else
-		expiration = now.plus({days: 1}).startOf('day');
+		expiration = now.plus({days: 1}).startOf('day').minus({hours: 2});
 
 	sender.userInfo.currentData = sender.userInfo.currentData || {};
 
