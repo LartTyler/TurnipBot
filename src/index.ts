@@ -5,6 +5,7 @@ import {BuyData} from './Models/BuyData';
 import {SellData} from './Models/SellData';
 import {UserInfo} from './Models/UserInfo';
 import * as mongoose from './mongoose';
+import * as Presence from './presence';
 
 if (!process.env.MONGO_URI)
 	throw new Error('You must provide a MONGO_URI environment variable');
@@ -13,8 +14,10 @@ mongoose.connect(process.env.MONGO_URI);
 
 const client = new Client();
 
-client.on('ready', () => {
+client.on('ready', async () => {
 	console.log('TurnipBot ready.');
+
+	await Presence.start(client);
 });
 
 client.on('guildMemberRemove', async member => {
