@@ -43,5 +43,5 @@ async function change(client: Client, delay: number) {
 		name: status.value,
 	});
 
-	setInterval(() => change(client, delay), delay);
+	setTimeout(() => change(client, delay), delay);
 }
