@@ -38,17 +38,38 @@ client.on('message', async (message: Message) => {
 	} else if (!message.content || message.author === client.user)
 		return;
 
+	const doc: any = {};
+
 	// A message isn't a direct message if it has a `guild` prop
 	if (message.guild) {
 		const member = message.guild.member(client.user);
 
 		if (!member || !message.mentions.has(member, {ignoreEveryone: true}))
 			return;
+
+		doc['$addToSet'] = {
+			serverIds: message.guild.id,
+		};
 	}
 
 	console.debug('Got command "%s" from %s"', message.content, message.author.tag);
 
-	const user = await UserInfo.findOne({userId: message.author.id});
+	const user = await UserInfo.findOneAndUpdate(
+		{
+			userId: message.author.id,
+		},
+		doc,
+		{
+			upsert: true,
+		},
+	);
+
+	if (!user) {
+		console.error('Could not create UserInfo for user!');
+
+		return;
+	}
+
 	const args = message.content.toLowerCase().split(' ').reduce((parts, part) => {
 		part = part.trim();
 
