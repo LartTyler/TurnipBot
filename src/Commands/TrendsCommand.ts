@@ -15,26 +15,28 @@ const buyDays = [
 ];
 
 export const execute: Command = async (sender, args) => {
-	if (!sender.message.guild) {
-		await sender.message.reply('This command can only be run from within a Discord server.');
-
-		return;
-	}
-
 	const users: IUserInfo[] = [];
 
-	if (args.length === 0) {
+	if (args.length === 0)
 		users.push(sender.userInfo);
-	} else if (args[0] === 'all') {
-		(await UserInfo.find({
-			serverIds: sender.message.guild.id,
-		})).map(user => users.push(user));
-	} else {
-		(await UserInfo.find({
-			userId: {
-				'$in': sender.message.mentions.users.map(user => user.id),
-			},
-		})).map(user => users.push(user));
+	else {
+		if (!sender.message.guild) {
+			await sender.message.reply('This command can only be run from within a Discord server.');
+
+			return;
+		}
+
+		if (args[0] === 'all') {
+			(await UserInfo.find({
+				serverIds: sender.message.guild.id,
+			})).map(user => users.push(user));
+		} else {
+			(await UserInfo.find({
+				userId: {
+					'$in': sender.message.mentions.users.map(user => user.id),
+				},
+			})).map(user => users.push(user));
+		}
 	}
 
 	const data: string[] = [];
@@ -82,7 +84,11 @@ export const execute: Command = async (sender, args) => {
 			}
 		}
 
-		const displayName = sender.message.guild.member(user.userId)?.displayName || '[redacted]';
+		// If guild isn't null, this came from a server, and should use display names. Otherwise, it was a direct
+		// message, and we're only processing results for the sender.
+		const displayName = sender.message.guild ?
+			sender.message.guild.member(user.userId)?.displayName || '[redacted]' :
+			sender.user.username;
 
 		data.push(`**${displayName}'s** trends for this week:\n<https://ac-turnip.com/#${parts.join(',')}>`);
 	}
