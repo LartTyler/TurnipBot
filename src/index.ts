@@ -64,6 +64,12 @@ client.on('message', async (message: Message) => {
 		},
 	);
 
+	if (!user) {
+		console.error('Could not create UserInfo for user!');
+
+		return;
+	}
+
 	const args = message.content.toLowerCase().split(' ').reduce((parts, part) => {
 		part = part.trim();
 

@@ -4,6 +4,7 @@ import * as BuyCommand from './BuyCommand';
 import * as PricesCommand from './PricesCommand';
 import * as SellCommand from './SellCommand';
 import * as TimezoneCommand from './TimezoneCommand';
+import * as TrendsCommand from './TrendsCommand';
 
 export async function execute(sender: CommandSender, args: string[]): Promise<void> {
 	switch (args.shift()) {
@@ -23,6 +24,10 @@ export async function execute(sender: CommandSender, args: string[]): Promise<vo
 		case 'timezone':
 			return TimezoneCommand.execute(sender, args);
 
+		case 'trend':
+		case 'trends':
+			return TrendsCommand.execute(sender, args);
+
 		default:
 			await sender.message.react(Emoji.CROSS);
 
@@ -36,9 +41,9 @@ export class CommandSender {
 	public readonly channel: TextChannel | DMChannel;
 	public readonly user: User;
 	public readonly message: Message;
-	public readonly userInfo: IUserInfo | null;
+	public readonly userInfo: IUserInfo;
 
-	public constructor(message: Message, userInfo: IUserInfo | null) {
+	public constructor(message: Message, userInfo: IUserInfo) {
 		this.channel = message.channel;
 		this.user = message.author;
 		this.message = message;
