@@ -52,7 +52,7 @@ client.on('message', async (message: Message) => {
 		};
 	}
 
-	console.debug('Got command "%s" from %s"', message.content, message.author.tag);
+	console.debug('Got command "%s" from "%s"', message.content, message.author.tag);
 
 	const user = await UserInfo.findOneAndUpdate(
 		{
