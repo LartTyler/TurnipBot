@@ -90,7 +90,7 @@ export const execute: Command = async (sender, args) => {
 			sender.message.guild.member(user.userId)?.displayName || '[redacted]' :
 			sender.user.username;
 
-		data.push(`**${displayName}'s** trends for this week:\n<https://ac-turnip.com/#${parts.join(',')}>`);
+		data.push(`**${displayName}'s** trends for this week:\n<https://ac-turnip.com/share?f=${parts.join('-')}>`);
 	}
 
 	if (data.length === 0)
