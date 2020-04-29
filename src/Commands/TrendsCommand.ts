@@ -39,7 +39,7 @@ export const execute: Command = async (sender, args) => {
 		}
 	}
 
-	const data: string[] = [];
+	const data: Array<[string, string[]]> = [];
 
 	for (const user of users) {
 		if (!user.timezone)
@@ -55,7 +55,7 @@ export const execute: Command = async (sender, args) => {
 		if (!sellData)
 			continue;
 
-		const parts = [sellData.price.toString(10)];
+		const parts = [sellData.price.toString()];
 		let buyData: IBuyData[];
 
 		if (local.weekday !== WeekDay.SUNDAY) {
@@ -90,11 +90,46 @@ export const execute: Command = async (sender, args) => {
 			sender.message.guild.member(user.userId)?.displayName || '[redacted]' :
 			sender.user.username;
 
-		data.push(`**${displayName}'s** trends for this week:\n<https://ac-turnip.com/share?f=${parts.join('-')}>`);
+		data.push([displayName, parts]);
 	}
 
 	if (data.length === 0)
 		await sender.message.reply('There isn\'t any trend data available right now.');
-	else
-		await sender.message.channel.send(data.join('\n\n'));
+	else if (data.length === 1) {
+		await sender.message.channel.send(formatTrendData(data[0][0], data[0][1]), {
+			embed: {
+				image: {
+					url: createShareUrl(ShareType.IMAGE, data[0][1]),
+				},
+			},
+		});
+	} else
+		await sender.message.channel.send(data.map(item => formatTrendData(item[0], item[1])).join('\n\n'));
 };
+
+function formatTrendData(name: string, data: string[]) {
+	return `**${name}'s** trends for this week:\n<${createShareUrl(ShareType.URL, data)}>`;
+}
+
+enum ShareType {
+	URL,
+	IMAGE,
+}
+
+function createShareUrl(type: ShareType, data: string[]) {
+	let suffix: string;
+
+	switch (type) {
+		case ShareType.IMAGE:
+			suffix = `p-${data.join('-')}.png`;
+
+			break;
+
+		case ShareType.URL:
+			suffix = `share?f=${data.join('-')}`;
+
+			break;
+	}
+
+	return `https://ac-turnip.com/${suffix}`;
+}
