@@ -71,7 +71,7 @@ export const TIMEZONE_REQUIRED_MESSAGE = 'I don\'t know what timezone you\'re in
 export async function notifyServers(sender: CommandSender, message: string) {
 	await doNotifyServers(
 		sender.user,
-		sender.channel instanceof TextChannel ? sender.channel.guild.id : null,
+		sender.channel instanceof TextChannel ? sender.channel.id : null,
 		sender.userInfo.serverIds,
 		message,
 	);

@@ -99,7 +99,7 @@ if (process.env.DISCORD_APP_TOKEN) {
 	});
 }
 
-export async function notifyServers(user: User, currentServerId: string | null, serverIds: string[], message: string) {
+export async function notifyServers(user: User, currentChannelId: string | null, serverIds: string[], message: string) {
 	const configs = await ServerConfig.find({
 		serverId: {
 			$in: serverIds,
@@ -107,9 +107,6 @@ export async function notifyServers(user: User, currentServerId: string | null, 
 	});
 
 	for (const config of configs) {
-		if (config.serverId === currentServerId)
-			continue;
-
 		const guild = client.guilds.resolve(config.serverId);
 
 		if (!guild)
@@ -121,6 +118,9 @@ export async function notifyServers(user: User, currentServerId: string | null, 
 			continue;
 
 		for (const channelId of config.notifyChannels) {
+			if (channelId === currentChannelId)
+				continue;
+
 			const channel = guild.channels.resolve(channelId);
 
 			if (!channel || !(channel instanceof TextChannel))
