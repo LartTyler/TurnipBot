@@ -1,6 +1,9 @@
 import {DMChannel, Message, TextChannel, User} from 'discord.js';
+import {notifyServers as doNotifyServers} from '../index';
+import {IServerConfig} from '../Models/ServerConfig';
 import {IUserInfo} from '../Models/UserInfo';
 import * as BuyCommand from './BuyCommand';
+import * as NotifyCommand from './NotifyCommand';
 import * as PricesCommand from './PricesCommand';
 import * as SellCommand from './SellCommand';
 import * as TimezoneCommand from './TimezoneCommand';
@@ -11,6 +14,10 @@ export async function execute(sender: CommandSender, args: string[]): Promise<vo
 		case 'buy':
 		case 'buying':
 			return BuyCommand.execute(sender, args);
+
+		case 'notify':
+		case 'notifications':
+			return NotifyCommand.execute(sender, args);
 
 		case 'price':
 		case 'prices':
@@ -42,12 +49,14 @@ export class CommandSender {
 	public readonly user: User;
 	public readonly message: Message;
 	public readonly userInfo: IUserInfo;
+	public readonly config: IServerConfig | null;
 
-	public constructor(message: Message, userInfo: IUserInfo) {
+	public constructor(message: Message, userInfo: IUserInfo, config: IServerConfig | null) {
 		this.channel = message.channel;
 		this.user = message.author;
 		this.message = message;
 		this.userInfo = userInfo;
+		this.config = config;
 	}
 }
 
@@ -58,3 +67,12 @@ export enum Emoji {
 
 export const TIMEZONE_REQUIRED_MESSAGE = 'I don\'t know what timezone you\'re in, so I can\'t record your buy ' +
 	'price correctly. Can you set your timezone using `@TurnipBot timezone <timezone>`, then try again?';
+
+export async function notifyServers(sender: CommandSender, message: string) {
+	await doNotifyServers(
+		sender.user,
+		sender.channel instanceof TextChannel ? sender.channel.guild.id : null,
+		sender.userInfo.serverIds,
+		message,
+	);
+}

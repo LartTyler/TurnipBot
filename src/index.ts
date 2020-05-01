@@ -1,8 +1,9 @@
-import {Client, Message} from 'discord.js';
+import {Client, Message, TextChannel, User} from 'discord.js';
 import * as Commands from './Commands';
 import {CommandSender} from './Commands';
 import {BuyData} from './Models/BuyData';
 import {SellData} from './Models/SellData';
+import {ServerConfig} from './Models/ServerConfig';
 import {UserInfo} from './Models/UserInfo';
 import * as mongoose from './mongoose';
 import * as Presence from './presence';
@@ -70,6 +71,10 @@ client.on('message', async (message: Message) => {
 		return;
 	}
 
+	const config = message.guild ? await ServerConfig.findOne({
+		serverId: message.guild.id,
+	}) : null;
+
 	const args = message.content.toLowerCase().split(' ').reduce((parts, part) => {
 		part = part.trim();
 
@@ -83,7 +88,7 @@ client.on('message', async (message: Message) => {
 	if (message.guild)
 		args.shift();
 
-	await Commands.execute(new CommandSender(message, user), args);
+	await Commands.execute(new CommandSender(message, user, config), args);
 });
 
 if (process.env.DISCORD_APP_TOKEN) {
@@ -92,4 +97,36 @@ if (process.env.DISCORD_APP_TOKEN) {
 	}).catch(err => {
 		console.error('Could not log in; reason: ' + err);
 	});
+}
+
+export async function notifyServers(user: User, currentServerId: string | null, serverIds: string[], message: string) {
+	const configs = await ServerConfig.find({
+		serverId: {
+			$in: serverIds,
+		},
+	});
+
+	for (const config of configs) {
+		if (config.serverId === currentServerId)
+			continue;
+
+		const guild = client.guilds.resolve(config.serverId);
+
+		if (!guild)
+			continue;
+
+		const displayName = guild.member(user)?.displayName;
+
+		if (!displayName)
+			continue;
+
+		for (const channelId of config.notifyChannels) {
+			const channel = guild.channels.resolve(channelId);
+
+			if (!channel || !(channel instanceof TextChannel))
+				continue;
+
+			await channel.send(message.replace(':displayName', displayName));
+		}
+	}
 }
