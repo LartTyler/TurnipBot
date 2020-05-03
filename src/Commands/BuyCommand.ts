@@ -1,7 +1,7 @@
 import {DateTime} from 'luxon';
 import {BuyData} from '../Models/BuyData';
 import {WeekDay} from '../util';
-import {Command, Emoji, TIMEZONE_REQUIRED_MESSAGE} from './index';
+import {Command, Emoji, notifyServers, TIMEZONE_REQUIRED_MESSAGE} from './index';
 
 // Syntax: buy[ing] [...] <amount>
 export const execute: Command = async (sender, args) => {
@@ -77,4 +77,6 @@ export const execute: Command = async (sender, args) => {
 		sender.user.tag,
 		expiration.toUTC().toISO(),
 	);
+
+	await notifyServers(sender, `**:displayName** updated their current buy price to ${price} bells.`);
 };
