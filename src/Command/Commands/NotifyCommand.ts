@@ -21,7 +21,7 @@ export class NotifyCommand implements Command {
 	}
 
 	getSummary(): string {
-		return 'Manages buy and sell price notification messages for a channel.';
+		return 'Manages buy and sell price notification messages for a channel. Cannot be used in direct messages.';
 	}
 
 	getHelpText(): string {

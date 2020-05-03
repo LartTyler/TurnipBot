@@ -20,7 +20,8 @@ export class PricesCommand implements Command {
 	}
 
 	public getSummary(): string {
-		return 'Displays current buy or sell prices, depending on the day of the week.';
+		return 'Displays current buy or sell prices, depending on the day of the week. Cannot be used in direct ' +
+			'messages.';
 	}
 
 	public getHelpText(): string {

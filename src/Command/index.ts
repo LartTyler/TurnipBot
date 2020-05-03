@@ -11,7 +11,6 @@ import {TimezoneCommand} from './Commands/TimezoneCommand';
 import {TrendsCommand} from './Commands/TrendsCommand';
 
 const PREFIX_REGEX = /:prefix\b/g;
-
 const COMMAND_MAP = new CommandMap();
 
 export function init() {
@@ -113,8 +112,6 @@ export class HelpCommand implements Command {
 		return '`' + `@${prefix} ${command.getKeywords()[0]} ${command.getUsage()}`.trim() + '`';
 	}
 }
-
-export type CommandExecutor = (sender: CommandSender, args: string[]) => Promise<void>;
 
 export interface Command {
 	getKeywords(): string[];
