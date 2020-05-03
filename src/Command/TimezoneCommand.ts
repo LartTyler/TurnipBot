@@ -1,9 +1,9 @@
 import {Info} from 'luxon';
 import {UserInfo} from '../Models/UserInfo';
-import {Command, Emoji} from './index';
+import {CommandExecutor, Emoji} from './index';
 
 // Syntax: (tz|timezone) <ianaTimezone>
-export const execute: Command = async (sender, args) => {
+export const execute: CommandExecutor = async (sender, args) => {
 	if (!Info.isValidIANAZone(args[0])) {
 		await sender.message.reply(
 			'Sorry, I didn\'t quite get that.\n\nTimezones need to be provided in an IANA-compatible format, e.g. ' +

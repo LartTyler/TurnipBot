@@ -3,7 +3,7 @@ import {BuyData, IBuyData} from '../Models/BuyData';
 import {SellData} from '../Models/SellData';
 import {IUserInfo, UserInfo} from '../Models/UserInfo';
 import {WeekDay} from '../util';
-import {Command} from './index';
+import {CommandExecutor} from './index';
 
 const buyDays = [
 	WeekDay.MONDAY,
@@ -14,7 +14,7 @@ const buyDays = [
 	WeekDay.SATURDAY,
 ];
 
-export const execute: Command = async (sender, args) => {
+export const execute: CommandExecutor = async (sender, args) => {
 	const users: IUserInfo[] = [];
 
 	if (args.length === 0)

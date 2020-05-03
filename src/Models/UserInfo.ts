@@ -36,11 +36,10 @@ const UserInfoSchema = new Schema({
 	},
 	serverIds: {
 		type: [SchemaTypes.String],
-		required: true,
+		default: [],
 	},
 	timezone: {
 		type: SchemaTypes.String,
-		required: true,
 	},
 	currentData: UserCurrentDataSchema,
 });

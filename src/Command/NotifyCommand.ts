@@ -1,6 +1,6 @@
 import {TextChannel} from 'discord.js';
 import {ServerConfig} from '../Models/ServerConfig';
-import {Command} from './index';
+import {CommandExecutor} from './index';
 
 enum Action {
 	Enable,
@@ -8,7 +8,7 @@ enum Action {
 	Toggle,
 }
 
-export const execute: Command = async (sender, args) => {
+export const execute: CommandExecutor = async (sender, args) => {
 	if (!(sender.channel instanceof TextChannel)) {
 		await sender.channel.send('This command can only be run from within a Discord server.');
 

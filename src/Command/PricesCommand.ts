@@ -1,7 +1,7 @@
 import {DateTime} from 'luxon';
 import {UserInfo} from '../Models/UserInfo';
 import {ucfirst, WeekDay} from '../util';
-import {Command} from './index';
+import {CommandExecutor} from './index';
 
 enum PriceType {
 	BUY = 'buy',
@@ -9,7 +9,7 @@ enum PriceType {
 }
 
 // Syntax: prices [<limit=1> [<type=auto>]]
-export const execute: Command = async (sender, args) => {
+export const execute: CommandExecutor = async (sender, args) => {
 	const guild = sender.message.guild;
 
 	if (!guild) {
