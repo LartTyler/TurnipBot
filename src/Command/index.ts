@@ -4,13 +4,17 @@ import {IServerConfig} from '../Models/ServerConfig';
 import {IUserInfo} from '../Models/UserInfo';
 import {CommandMap} from './CommandMap';
 import {BuyCommand} from './Commands/BuyCommand';
+import {NotifyCommand} from './Commands/NotifyCommand';
 import {SellCommand} from './Commands/SellCommand';
+
+const PREFIX_REGEX = /:prefix\b/g;
 
 const COMMAND_MAP = new CommandMap();
 
 export function init() {
 	COMMAND_MAP.add(new BuyCommand());
 	COMMAND_MAP.add(new SellCommand());
+	COMMAND_MAP.add(new NotifyCommand());
 	COMMAND_MAP.add(new HelpCommand());
 
 	console.debug('Commands loaded.');
@@ -65,8 +69,9 @@ export class HelpCommand implements Command {
 			return;
 		}
 
+		const prefix = getBotDisplayName(sender.channel);
 		const lines = [
-			`**Usage:** ${this.createUsageText(getBotDisplayName(sender.channel), command)}`,
+			`**Usage:** ${this.createUsageText(prefix, command)}`.replace(/:prefix\b/, prefix),
 		];
 
 		if (command.getKeywords().length > 1) {
@@ -80,7 +85,7 @@ export class HelpCommand implements Command {
 		if (command.getHelpText().length > 0)
 			lines.push('\n' + command.getHelpText());
 
-		await sender.channel.send(lines.join('\n'));
+		await sender.channel.send(lines.join('\n').replace(PREFIX_REGEX, '@' + prefix));
 	}
 
 	protected async executeList(sender: CommandSender): Promise<void> {
@@ -92,9 +97,9 @@ export class HelpCommand implements Command {
 
 		await sender.channel.send(
 			`All commands should begin with \`@${prefix}\`, unless the command is being sent in a DM. For more ` +
-			`information on any of the commands listed below, you can type \`${prefix} help <command>\`.\n\n` +
+			`information on any of the commands listed below, you can type \`@${prefix} help <command>\`.\n\n` +
 			'**Commands:**\n' +
-			commands.join('\n\n'),
+			commands.join('\n\n').replace(PREFIX_REGEX, '@' + prefix),
 		);
 	}
 
