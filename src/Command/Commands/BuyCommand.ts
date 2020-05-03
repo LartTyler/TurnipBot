@@ -1,7 +1,14 @@
 import {DateTime} from 'luxon';
 import {BuyData} from '../../Models/BuyData';
 import {WeekDay} from '../../util';
-import {Command, CommandSender, Emoji, notifyServers, TIMEZONE_REQUIRED_MESSAGE} from '../index';
+import {
+	Command,
+	CommandSender,
+	createTimezoneRequiredMessage,
+	createUseHelpMessage,
+	Emoji,
+	notifyServers,
+} from '../index';
 
 export class BuyCommand implements Command {
 	public getKeywords(): string[] {
@@ -21,12 +28,13 @@ export class BuyCommand implements Command {
 
 	getHelpText(): string {
 		return 'This command cannot be run on Sunday, or when the shop isn\'t open on your island. Buy prices will ' +
-			'automatically be expired when prices change at 12pm, and when the shop closes at 10pm.';
+			'automatically be expired when prices change at 12pm, and when the shop closes at 10pm.\n\n' +
+			'You _must_ set your timezone with `:prefix timezone` before you can use this command.';
 	}
 
 	public async execute(sender: CommandSender, args: string[]): Promise<void> {
 		if (!sender.userInfo?.timezone) {
-			await sender.message.reply(TIMEZONE_REQUIRED_MESSAGE);
+			await sender.message.reply(createTimezoneRequiredMessage(sender.channel));
 
 			return;
 		}
@@ -50,9 +58,7 @@ export class BuyCommand implements Command {
 		const price = parseInt(args.find(arg => /\d+/.test(arg)) || '', 10);
 
 		if (isNaN(price)) {
-			await sender.message.reply(
-				'Sorry, I didn\'t quite get that. Tell me buy prices like this: `@TurnipBot buying for 125`.',
-			);
+			await sender.message.reply(createUseHelpMessage(sender.channel, this));
 
 			return;
 		}

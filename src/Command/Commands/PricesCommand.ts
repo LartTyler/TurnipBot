@@ -1,7 +1,7 @@
 import {DateTime} from 'luxon';
 import {UserInfo} from '../../Models/UserInfo';
 import {ucfirst, WeekDay} from '../../util';
-import {Command, CommandSender} from '../index';
+import {Command, CommandSender, createUseHelpMessage} from '../index';
 
 enum PriceType {
 	BUY = 'buy',
@@ -95,7 +95,7 @@ export class PricesCommand implements Command {
 				item.currentData.sellExpiration,
 			));
 		} else {
-			await sender.message.reply('Sorry, I didn\'t quite get that. Allowed price types are "buy" and "sell."');
+			await sender.message.reply(createUseHelpMessage(sender.channel, this));
 
 			return;
 		}

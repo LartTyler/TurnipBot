@@ -1,6 +1,6 @@
 import {TextChannel} from 'discord.js';
 import {ServerConfig} from '../../Models/ServerConfig';
-import {Command, CommandSender} from '../index';
+import {Command, CommandSender, createUseHelpMessage} from '../index';
 
 enum Action {
 	Enable,
@@ -48,10 +48,7 @@ export class NotifyCommand implements Command {
 		const action = this.toAction(args[0] ?? null);
 
 		if (action === null) {
-			await sender.message.reply(
-				'Sorry, I didn\'t quite get that. You can manage notifications like this: ' +
-				'`@TurnipBot notify on #channel` or `@TurnipBot notify off #channel`',
-			);
+			await sender.message.reply(createUseHelpMessage(sender.channel, this));
 
 			return;
 		}

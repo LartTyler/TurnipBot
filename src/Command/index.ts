@@ -1,4 +1,4 @@
-import {DMChannel, Message, TextChannel, User} from 'discord.js';
+import {Channel, DMChannel, Message, TextChannel, User} from 'discord.js';
 import {getBotDisplayName, notifyServers as doNotifyServers} from '../index';
 import {IServerConfig} from '../Models/ServerConfig';
 import {IUserInfo} from '../Models/UserInfo';
@@ -146,8 +146,15 @@ export enum Emoji {
 	CROSS = '❌',
 }
 
-export const TIMEZONE_REQUIRED_MESSAGE = 'I don\'t know what timezone you\'re in, so I can\'t record your buy ' +
-	'price correctly. Can you set your timezone using `@TurnipBot timezone <timezone>`, then try again?';
+export function createUseHelpMessage(channel: Channel, command: Command): string {
+	return 'Sorry, I didn\'t quite get that. For help using this command, use the ' +
+		`\`@${getBotDisplayName(channel)} help ${command.getKeywords()[0]}\` command.`;
+}
+
+export function createTimezoneRequiredMessage(channel: Channel): string {
+	return 'I need to know what timezone you\'re in before you can use that command. For more information, use the ' +
+		`\`@${getBotDisplayName(channel)} help timezone\` command.`;
+}
 
 export async function notifyServers(sender: CommandSender, message: string) {
 	await doNotifyServers(
