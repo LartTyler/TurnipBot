@@ -8,6 +8,7 @@ import {NotifyCommand} from './Commands/NotifyCommand';
 import {PricesCommand} from './Commands/PricesCommand';
 import {SellCommand} from './Commands/SellCommand';
 import {TimezoneCommand} from './Commands/TimezoneCommand';
+import {TrendsCommand} from './Commands/TrendsCommand';
 
 const PREFIX_REGEX = /:prefix\b/g;
 
@@ -17,6 +18,7 @@ export function init() {
 	COMMAND_MAP.add(new BuyCommand());
 	COMMAND_MAP.add(new SellCommand());
 	COMMAND_MAP.add(new PricesCommand());
+	COMMAND_MAP.add(new TrendsCommand());
 	COMMAND_MAP.add(new TimezoneCommand());
 	COMMAND_MAP.add(new NotifyCommand());
 	COMMAND_MAP.add(new HelpCommand());
