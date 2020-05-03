@@ -38,8 +38,6 @@ export const execute: Command = async (sender, args) => {
 	else
 		sender.message.mentions.channels.forEach(channel => channels.push(channel));
 
-	console.log(channels.length);
-	console.log(channels.map(channel => channel.name));
 
 	const skipped: TextChannel[] = [];
 
@@ -74,8 +72,6 @@ export const execute: Command = async (sender, args) => {
 		);
 	} else
 		await sender.message.reply('Notification settings updated!');
-
-	console.log(config.notifyChannels);
 
 	await config.save();
 };
