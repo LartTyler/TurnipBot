@@ -5,6 +5,7 @@ import {IUserInfo} from '../Models/UserInfo';
 import {CommandMap} from './CommandMap';
 import {BuyCommand} from './Commands/BuyCommand';
 import {NotifyCommand} from './Commands/NotifyCommand';
+import {PricesCommand} from './Commands/PricesCommand';
 import {SellCommand} from './Commands/SellCommand';
 
 const PREFIX_REGEX = /:prefix\b/g;
@@ -14,6 +15,7 @@ const COMMAND_MAP = new CommandMap();
 export function init() {
 	COMMAND_MAP.add(new BuyCommand());
 	COMMAND_MAP.add(new SellCommand());
+	COMMAND_MAP.add(new PricesCommand());
 	COMMAND_MAP.add(new NotifyCommand());
 	COMMAND_MAP.add(new HelpCommand());
 
