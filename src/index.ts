@@ -1,6 +1,6 @@
-import {Client, Message, TextChannel, User} from 'discord.js';
-import * as Commands from './Commands';
-import {CommandSender} from './Commands';
+import {Channel, Client, Message, TextChannel, User} from 'discord.js';
+import * as Commands from './Command';
+import {CommandSender} from './Command';
 import {BuyData} from './Models/BuyData';
 import {SellData} from './Models/SellData';
 import {ServerConfig} from './Models/ServerConfig';
@@ -12,6 +12,7 @@ if (!process.env.MONGO_URI)
 	throw new Error('You must provide a MONGO_URI environment variable');
 
 mongoose.connect(process.env.MONGO_URI);
+Commands.init();
 
 const client = new Client();
 
@@ -39,36 +40,22 @@ client.on('message', async (message: Message) => {
 	} else if (!message.content || message.author === client.user)
 		return;
 
-	const doc: any = {};
-
 	// A message isn't a direct message if it has a `guild` prop
-	if (message.guild) {
-		const member = message.guild.member(client.user);
-
-		if (!member || !message.mentions.has(member, {ignoreEveryone: true}))
-			return;
-
-		doc['$addToSet'] = {
-			serverIds: message.guild.id,
-		};
-	}
+	if (message.guild && !message.mentions.has(client.user, {ignoreEveryone: true}))
+		return;
 
 	console.debug('Got command "%s" from "%s"', message.content, message.author.tag);
 
-	const user = await UserInfo.findOneAndUpdate(
-		{
-			userId: message.author.id,
-		},
-		doc,
-		{
-			upsert: true,
-		},
-	);
+	const user = await UserInfo.findOne({
+		userId: message.author.id,
+	}) || new UserInfo({
+		userId: message.author.id,
+	});
 
-	if (!user) {
-		console.error('Could not create UserInfo for user!');
+	if (message.guild && user.serverIds.indexOf(message.guild.id) === -1) {
+		user.serverIds.push(message.guild.id);
 
-		return;
+		await user.save();
 	}
 
 	const config = message.guild ? await ServerConfig.findOne({
@@ -84,8 +71,8 @@ client.on('message', async (message: Message) => {
 		return parts;
 	}, [] as string[]);
 
-	// Throw away the mention, if this is NOT a direct message
-	if (message.guild)
+	// Throw away the mention, if this is NOT a direct message OR if the message appears to start with a mention.
+	if (message.guild || (args[0] ?? '').charAt(0) === '<')
 		args.shift();
 
 	await Commands.execute(new CommandSender(message, user, config), args);
@@ -129,4 +116,11 @@ export async function notifyServers(user: User, currentChannelId: string | null,
 			await channel.send(message.replace(':displayName', displayName));
 		}
 	}
+}
+
+export function getBotDisplayName(channel: Channel): string {
+	if (!client.user)
+		return 'TurnipBot';
+
+	return (channel instanceof TextChannel && channel.guild.member(client.user)?.displayName) || 'TurnipBot';
 }
